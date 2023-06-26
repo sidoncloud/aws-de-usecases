@@ -1,0 +1,33 @@
+{
+  "Comment": "A state machine that triggers a Lambda function and a Glue job.",
+  "StartAt": "TriggerLambdaFunction",
+  "States": {
+    "TriggerLambdaFunction": {
+      "Type": "Task",
+      "Resource": "arn:aws:lambda:eu-west-1:077056421570:function:mysql_data_extraction",
+      "Parameters": {
+        "FunctionName": "extract_rds"
+      },
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "Next": "LambdaFunctionError"
+        }
+      ],
+      "Next": "TriggerGlueJob"
+    },
+    "TriggerGlueJob": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::glue:startJobRun.sync",
+      "Parameters": {
+        "JobName": "pyspark_etl"
+      },
+      "End": true
+    },
+    "LambdaFunctionError": {
+      "Type": "Fail",
+      "Cause": "Lambda function failed",
+      "Error": "LambdaFunctionError"
+    }
+  }
+}
