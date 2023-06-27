@@ -12,9 +12,9 @@ def lambda_handler(event, context):
     try:
         transaction_id = event['transaction_id']
         user_id = event['user_id']
-        amount_usd = Decimal(event['amount_usd'])
         creation_date = event['creation_date']
         product_id = event['product_id']
+        num_items = event['num_items']
         transaction_status = event['transaction_status']
     except KeyError as e:
         return {
@@ -27,8 +27,8 @@ def lambda_handler(event, context):
            Item={
                 'transaction_id': transaction_id,
                 'user_id': user_id,
-                'amount_usd': amount_usd,
                 'creation_date': creation_date,
+                'num_items' : num_items,
                 'product_id': product_id,
                 'transaction_status': transaction_status
             }
